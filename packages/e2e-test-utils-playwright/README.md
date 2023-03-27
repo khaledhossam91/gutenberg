@@ -49,7 +49,7 @@ test.use( {
 Within a test or test utility, use the `canvas` property to select elements within the iframe canvas:
 
 ```js
-await editor.canvas.locator( 'role=document[name="Paragraph block"i]' )
+const paragraphBlock = editor.canvas.getByRole( 'document', { name: 'Paragraph block' } );
 ```
 
 ### PageUtils

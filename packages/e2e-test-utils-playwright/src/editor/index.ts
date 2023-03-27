@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import type { Browser, Page, BrowserContext, Frame } from '@playwright/test';
+import type { Browser, Page, BrowserContext, Locator } from '@playwright/test';
 
 /**
  * Internal dependencies
@@ -35,8 +35,10 @@ export class Editor {
 		this.browser = this.context.browser()!;
 	}
 
-	get canvas(): Frame | Page {
-		return this.page.frame( 'editor-canvas' ) || this.page;
+	get canvas(): Locator {
+		return this.page
+			.frameLocator( 'iframe[name="editor-canvas"]' )
+			.locator( ':scope' );
 	}
 
 	/** @borrows clickBlockOptionsMenuItem as this.clickBlockOptionsMenuItem */
