@@ -28,15 +28,14 @@ export class Editor {
 	browser: Browser;
 	page: Page;
 	context: BrowserContext;
+	canvas: Locator;
 
 	constructor( { page }: EditorConstructorProps ) {
 		this.page = page;
 		this.context = page.context();
 		this.browser = this.context.browser()!;
-	}
 
-	get canvas(): Locator {
-		return this.page
+		this.canvas = this.page
 			.frameLocator( 'iframe[name="editor-canvas"]' )
 			.locator( ':scope' );
 	}

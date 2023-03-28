@@ -18,7 +18,7 @@ test.describe( 'Block list view', () => {
 			postType: 'wp_template',
 		} );
 
-		await editor.canvas.click( 'body' );
+		await editor.canvas.locator( 'body' ).click();
 
 		// Should display the Preview button.
 		await expect(

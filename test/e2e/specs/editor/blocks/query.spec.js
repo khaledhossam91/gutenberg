@@ -32,7 +32,7 @@ test.describe( 'Query block', () => {
 		test( 'List', async ( { page, editor } ) => {
 			await editor.insertBlock( { name: 'core/query' } );
 
-			await editor.canvas
+			await page
 				.getByRole( 'document', { name: 'Block: Query Loop' } )
 				.getByRole( 'button', { name: 'Choose' } )
 				.click();

@@ -18,7 +18,7 @@ test.describe( 'Push to Global Styles button', () => {
 
 	test.beforeEach( async ( { admin, editor } ) => {
 		await admin.visitSiteEditor();
-		await editor.canvas.click( 'body' );
+		await editor.canvas.locator( 'body' ).click();
 	} );
 
 	test( 'should apply Heading block styles to all Heading blocks', async ( {

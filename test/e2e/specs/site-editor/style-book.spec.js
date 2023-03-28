@@ -20,7 +20,7 @@ test.describe( 'Style Book', () => {
 
 	test.beforeEach( async ( { admin, editor, styleBook, page } ) => {
 		await admin.visitSiteEditor();
-		await editor.canvas.click( 'body' );
+		await editor.canvas.locator( 'body' ).click();
 		await styleBook.open();
 		await expect(
 			page.locator( 'role=region[name="Style Book"i]' )
