@@ -91,7 +91,7 @@ function AddSubmenuItem( { block, onClose } ) {
 }
 
 export default function LeafMoreMenu( props ) {
-	const { block, expandedState, expand } = props;
+	const { block } = props;
 	const { clientId } = block;
 
 	const { moveBlocksDown, moveBlocksUp, removeBlocks } =
@@ -142,12 +142,7 @@ export default function LeafMoreMenu( props ) {
 						>
 							{ __( 'Move down' ) }
 						</MenuItem>
-						<AddSubmenuItem
-							expandedState={ expandedState }
-							expand={ expand }
-							block={ block }
-							onClose={ onClose }
-						/>
+						<AddSubmenuItem block={ block } onClose={ onClose } />
 					</MenuGroup>
 					<MenuGroup>
 						<MenuItem
