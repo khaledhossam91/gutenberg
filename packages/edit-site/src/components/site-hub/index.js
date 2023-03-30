@@ -11,13 +11,14 @@ import {
 	Button,
 	__unstableMotion as motion,
 	__unstableAnimatePresence as AnimatePresence,
+	__unstableUseAnimation as useAnimation,
 	__experimentalHStack as HStack,
 } from '@wordpress/components';
 import { useReducedMotion } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { store as blockEditorStore } from '@wordpress/block-editor';
 import { store as coreStore } from '@wordpress/core-data';
-import { forwardRef } from '@wordpress/element';
+import { forwardRef, useEffect } from '@wordpress/element';
 
 /**
  * Internal dependencies
@@ -57,13 +58,19 @@ const SiteHub = forwardRef( ( props, ref ) => {
 		[]
 	);
 
+	const controls = useAnimation();
+
+	useEffect( () => {
+		controls.set( { layout: true } );
+	}, [] );
+
 	return (
 		<motion.div
 			ref={ ref }
 			{ ...props }
 			className={ classnames( 'edit-site-site-hub', props.className ) }
 			initial={ false }
-			layout
+			animate={ controls }
 			transition={ {
 				type: 'tween',
 				duration: disableMotion ? 0 : HUB_ANIMATION_DURATION,
@@ -78,6 +85,7 @@ const SiteHub = forwardRef( ( props, ref ) => {
 				<motion.div
 					className="edit-site-site-hub__view-mode-toggle-container"
 					layout
+					animate={ controls }
 					transition={ {
 						type: 'tween',
 						duration: disableMotion ? 0 : HUB_ANIMATION_DURATION,
@@ -111,8 +119,7 @@ const SiteHub = forwardRef( ( props, ref ) => {
 
 				<AnimatePresence>
 					<motion.div
-						initial={ false }
-						layout
+						layout={ canvasMode === 'edit' }
 						animate={ {
 							opacity: canvasMode === 'view' ? 1 : 0,
 						} }
@@ -124,6 +131,7 @@ const SiteHub = forwardRef( ( props, ref ) => {
 							type: 'tween',
 							duration: disableMotion ? 0 : 0.2,
 							ease: 'easeOut',
+							delay: canvasMode === 'view' ? 0.1 : 0,
 						} }
 					>
 						{ siteTitle }
