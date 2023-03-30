@@ -42,7 +42,6 @@ const SiteHub = forwardRef( ( props, ref ) => {
 	const disableMotion = useReducedMotion();
 	const { setCanvasMode } = unlock( useDispatch( editSiteStore ) );
 	const { clearSelectedBlock } = useDispatch( blockEditorStore );
-	const showLabels = canvasMode !== 'edit';
 	const siteIconButtonProps = {
 		label: __( 'Open Navigation Sidebar' ),
 		onMouseDown: () => {
@@ -111,21 +110,24 @@ const SiteHub = forwardRef( ( props, ref ) => {
 				</motion.div>
 
 				<AnimatePresence>
-					{ showLabels && (
-						<motion.div
-							initial={ false }
-							layout
-							animate={ {
-								opacity: canvasMode === 'view' ? 1 : 0,
-							} }
-							exit={ {
-								opacity: 0,
-							} }
-							className="edit-site-site-hub__site-title"
-						>
-							{ siteTitle }
-						</motion.div>
-					) }
+					<motion.div
+						initial={ false }
+						layout
+						animate={ {
+							opacity: canvasMode === 'view' ? 1 : 0,
+						} }
+						exit={ {
+							opacity: 0,
+						} }
+						className="edit-site-site-hub__site-title"
+						transition={ {
+							type: 'tween',
+							duration: disableMotion ? 0 : 0.2,
+							ease: 'easeOut',
+						} }
+					>
+						{ siteTitle }
+					</motion.div>
 				</AnimatePresence>
 			</HStack>
 		</motion.div>
