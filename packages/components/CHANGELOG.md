@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+### Internal
+
+-   `NavigableContainer`: Convert to TypeScript ([#49377](https://github.com/WordPress/gutenberg/pull/49377)).
+
 ## 23.7.0 (2023-03-29)
 
 -   `ImageSizeControl`: Remove the "Image Dimensions" label ([#49414](https://github.com/WordPress/gutenberg/pull/49414)).
