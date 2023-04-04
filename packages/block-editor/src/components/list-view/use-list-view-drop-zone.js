@@ -167,10 +167,13 @@ function getListViewDropTarget( blocksData, position ) {
 		isDraggingBelow &&
 		candidateBlockData.isLastChildOfRoot &&
 		candidateBlockData.canInsertDraggedBlocksIntoParent &&
+		candidateBlockData.rootClientId &&
 		isUpGesture( position, candidateRect )
 	) {
 		return {
-			rootClientId: candidateBlockData.parentOfRootClientId,
+			rootClientId:
+				candidateBlockData.parentOfRootClientId ??
+				candidateBlockData.rootClientId,
 			clientId: candidateBlockData.clientId, // This is used as the target for the drop indicator.
 			blockIndex: candidateBlockData.parentBlockIndex + 1,
 			dropPosition: candidateEdge,
@@ -255,6 +258,7 @@ export default function useListViewDropZone() {
 						childrenOfRootClientId[
 							childrenOfRootClientId.length - 1
 						]?.clientId === clientId;
+					const blockIndex = getBlockIndex( clientId );
 
 					return {
 						clientId,
@@ -262,8 +266,9 @@ export default function useListViewDropZone() {
 						isLastChildOfRoot,
 						parentOfRootClientId,
 						rootClientId,
-						blockIndex: getBlockIndex( clientId ),
-						parentBlockIndex: getBlockIndex( rootClientId ),
+						blockIndex,
+						parentBlockIndex:
+							getBlockIndex( rootClientId ) || blockIndex,
 						element: blockElement,
 						isDraggedBlock: isBlockDrag
 							? draggedBlockClientIds.includes( clientId )
@@ -281,7 +286,7 @@ export default function useListViewDropZone() {
 										draggedBlockClientIds,
 										parentOfRootClientId
 								  )
-								: false,
+								: true,
 						canInsertDraggedBlocksAsChild: isBlockDrag
 							? canInsertBlocks( draggedBlockClientIds, clientId )
 							: true,
