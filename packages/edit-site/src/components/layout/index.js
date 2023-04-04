@@ -251,7 +251,7 @@ export default function Layout() {
 								}
 							>
 								<NavigableRegion
-									ariaLabel={ __( 'Navigation sidebar' ) }
+									ariaLabel={ __( 'Navigation' ) }
 								>
 									<Sidebar />
 								</NavigableRegion>

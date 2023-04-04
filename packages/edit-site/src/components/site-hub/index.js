@@ -49,7 +49,7 @@ const SiteHub = forwardRef( ( props, ref ) => {
 				'aria-label': __( 'Go back to the dashboard' ),
 		  }
 		: {
-				label: __( 'Open Navigation Sidebar' ),
+				label: __( 'Open Navigation' ),
 				onClick: () => {
 					clearSelectedBlock();
 					setCanvasMode( 'view' );
