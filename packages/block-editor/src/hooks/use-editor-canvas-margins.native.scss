@@ -1,0 +1,27 @@
+.block-editor-hooks__use-editor-canvas-margins {
+	width: 100%;
+	max-width: 580;
+	align-self: center;
+}
+
+.block-editor-hooks__use-editor-canvas-margins--reversed {
+	flex-direction: column-reverse;
+	width: 100%;
+	max-width: 580;
+}
+
+.block-editor-hooks__use-editor-canvas-margins-alignment--full {
+	max-width: 100%;
+}
+
+.block-editor-hooks__use-editor-canvas-margins-alignment--wide {
+	max-width: 1054;
+}
+
+.block-editor-hooks__use-editor-canvas-margins-alignment--wide-medium {
+	max-width: 770;
+}
+
+.block-editor-hooks__use-editor-canvas-margins-alignment--wide-landscape {
+	max-width: 662;
+}
