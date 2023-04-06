@@ -53,7 +53,7 @@ if ( class_exists( 'WP_REST_Controller' ) ) {
 	require_once __DIR__ . '/compat/wordpress-6.3/class-gutenberg-rest-templates-controller-6-3.php';
 	require_once __DIR__ . '/compat/wordpress-6.3/rest-api.php';
 	require_once __DIR__ . '/compat/wordpress-6.3/class-gutenberg-rest-patterns-controller.php';
-	require_once __DIR__ . '/compat/wordpress-6.3/post.php';
+	require_once __DIR__ . '/compat/wordpress-6.3/user-block-patterns.php';
 
 	// Experimental.
 	if ( ! class_exists( 'WP_Rest_Customizer_Nonces' ) ) {
