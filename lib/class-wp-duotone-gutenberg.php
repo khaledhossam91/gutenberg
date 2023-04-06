@@ -74,6 +74,11 @@ class WP_Duotone_Gutenberg {
 	const CSS_VAR_PREFIX = '--wp--preset--duotone--';
 
 	/**
+	 * Prefix used for generating and referencing duotone filter IDs.
+	 */
+	const FILTER_ID_PREFIX = 'wp-duotone-';
+
+	/**
 	 * Direct port of colord's clamp function. Using min/max instead of
 	 * nested ternaries.
 	 *
@@ -452,6 +457,90 @@ class WP_Duotone_Gutenberg {
 	}
 
 	/**
+	 * Get the ID of the duotone filter.
+	 *
+	 * @param string $slug The slug of the duotone preset.
+	 * @return string The ID of the duotone filter.
+	 */
+	private static function get_filter_id( $slug ) {
+		return self::FILTER_ID_PREFIX . $slug;
+	}
+
+	/**
+	 * Gets the SVG for the duotone filter definition.
+	 *
+	 * @param string $filter_id The ID of the filter.
+	 * @param array  $colors    An array of color strings.
+	 * @return string An SVG with a duotone filter definition.
+	 */
+	private static function get_filter_svg( $filter_id, $colors ) {
+		$duotone_values = array(
+			'r' => array(),
+			'g' => array(),
+			'b' => array(),
+			'a' => array(),
+		);
+
+		foreach ( $colors as $color_str ) {
+			$color = self::colord_parse( $color_str );
+
+			$duotone_values['r'][] = $color['r'] / 255;
+			$duotone_values['g'][] = $color['g'] / 255;
+			$duotone_values['b'][] = $color['b'] / 255;
+			$duotone_values['a'][] = $color['a'];
+		}
+
+		ob_start();
+
+		?>
+
+		<svg
+			xmlns="http://www.w3.org/2000/svg"
+			viewBox="0 0 0 0"
+			width="0"
+			height="0"
+			focusable="false"
+			role="none"
+			style="visibility: hidden; position: absolute; left: -9999px; overflow: hidden;"
+		>
+			<defs>
+				<filter id="<?php echo esc_attr( $filter_id ); ?>">
+					<feColorMatrix
+						color-interpolation-filters="sRGB"
+						type="matrix"
+						values="
+							.299 .587 .114 0 0
+							.299 .587 .114 0 0
+							.299 .587 .114 0 0
+							.299 .587 .114 0 0
+						"
+					/>
+					<feComponentTransfer color-interpolation-filters="sRGB" >
+						<feFuncR type="table" tableValues="<?php echo esc_attr( implode( ' ', $duotone_values['r'] ) ); ?>" />
+						<feFuncG type="table" tableValues="<?php echo esc_attr( implode( ' ', $duotone_values['g'] ) ); ?>" />
+						<feFuncB type="table" tableValues="<?php echo esc_attr( implode( ' ', $duotone_values['b'] ) ); ?>" />
+						<feFuncA type="table" tableValues="<?php echo esc_attr( implode( ' ', $duotone_values['a'] ) ); ?>" />
+					</feComponentTransfer>
+					<feComposite in2="SourceGraphic" operator="in" />
+				</filter>
+			</defs>
+		</svg>
+
+		<?php
+
+		$svg = ob_get_clean();
+
+		if ( ! SCRIPT_DEBUG ) {
+			// Clean up the whitespace.
+			$svg = preg_replace( "/[\r\n\t ]+/", ' ', $svg );
+			$svg = str_replace( '> <', '><', $svg );
+			$svg = trim( $svg );
+		}
+
+		return $svg;
+	}
+
+	/**
 	 * Get the CSS variable for a duotone preset.
 	 *
 	 * @param string $slug The slug of the duotone preset.
@@ -480,8 +569,7 @@ class WP_Duotone_Gutenberg {
 	public static function output_footer_assets() {
 		foreach ( self::$output as $filter_data ) {
 
-			// SVG will be output on the page later.
-			$filter_svg = gutenberg_get_duotone_filter_svg( $filter_data );
+			$filter_svg = self::get_filter_svg_from_preset( $filter_data );
 
 			echo $filter_svg;
 
@@ -504,7 +592,7 @@ class WP_Duotone_Gutenberg {
 		$duotone_svgs = '';
 		$duotone_css  = 'body{';
 		foreach ( self::$global_styles_presets as $filter_data ) {
-			$duotone_svgs .= gutenberg_get_duotone_filter_svg( $filter_data );
+			$duotone_svgs .= self::get_filter_svg_from_preset( $filter_data );
 			$duotone_css  .= self::get_css_custom_property_declaration( $filter_data );
 		}
 		$duotone_css .= '}';
@@ -666,7 +754,7 @@ class WP_Duotone_Gutenberg {
 
 		// - Applied as a class attribute to the block wrapper.
 		// - Used as a selector to apply the filter to the block.
-		$filter_id = gutenberg_get_duotone_filter_id( array( 'slug' => $slug ) );
+		$filter_id = self::get_filter_id( $slug );
 
 		// Build the CSS selectors to which the filter will be applied.
 		$selectors = explode( ',', $duotone_selector );
@@ -734,5 +822,16 @@ class WP_Duotone_Gutenberg {
 		}
 
 		return $settings;
+	}
+
+	/**
+	 * Gets the SVG for the duotone filter definition from a preset.
+	 *
+	 * @param array $preset The duotone preset.
+	 * @return string The SVG for the filter definition.
+	 */
+	public static function get_filter_svg_from_preset( $preset ) {
+		$filter_id = self::get_filter_id( $preset['slug'] );
+		return self::get_filter_svg( $filter_id, $preset['colors'] );
 	}
 }
