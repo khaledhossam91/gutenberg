@@ -17,7 +17,7 @@ class WP_Duotone_Gutenberg {
 	 *
 	 * Example:
 	 * [
-	 *      'blue-orange' =>
+	 *      'wp-duotone-blue-orange' =>
 	 *          [
 	 *              'slug'  => 'blue-orange',
 	 *              'colors' => [ '#0000ff', '#ffcc00' ],
@@ -99,10 +99,9 @@ class WP_Duotone_Gutenberg {
 	 *
 	 * Example:
 	 *  [
-	 *      'blue-orange' => [
+	 *      'wp-duotone-blue-orange' => [
 	 *          'slug'  => 'blue-orange',
 	 *          'colors' => [ '#0000ff', '#ffcc00' ],
-	 *          'filter_id' => 'wp-duotone-blue-orange',
 	 *      ],
 	 *      …
 	 *  ]
@@ -116,11 +115,9 @@ class WP_Duotone_Gutenberg {
 	 * Add a duotone preset to the list of CSS custom properties that will be output to the page.
 	 *
 	 * @param string $filter_id The filter ID. e.g. 'wp-duotone-000000-ffffff-2'.
-	 * @param string $slug      The slug of the duotone preset.
 	 */
-	private static function add_global_styles_preset( $filter_id, $slug ) {
-		self::$used_global_styles_presets[ $slug ]              = self::$global_styles_presets[ $slug ];
-		self::$used_global_styles_presets[ $slug ]['filter_id'] = $filter_id;
+	private static function add_global_styles_preset( $filter_id ) {
+		self::$used_global_styles_presets[ $filter_id ] = self::$global_styles_presets[ $filter_id ];
 	}
 
 	/**
@@ -128,15 +125,13 @@ class WP_Duotone_Gutenberg {
 	 *
 	 * Example:
 	 *  [
-	 *      'blue-orange' => [
+	 *      'wp-duotone-blue-orange' => [
 	 *          'slug'      => 'blue-orange',
 	 *          'colors'    => [ '#0000ff', '#ffcc00' ],
-	 *          'filter_id' => 'wp-duotone-blue-orange',
 	 *      ],
-	 *      '000000-ffffff-2' => [
+	 *      'wp-duotone-000000-ffffff-2' => [
 	 *          'slug'      => '000000-ffffff-2',
 	 *          'colors'    => [ '#000000', '#ffffff' ],
-	 *          'filter_id' => 'wp-duotone-000000-ffffff-2',
 	 *      ],
 	 *      …
 	 *  ]
@@ -153,10 +148,7 @@ class WP_Duotone_Gutenberg {
 	 * @param array  $filter_data Duotone filter data with 'slug' and 'colors' keys.
 	 */
 	private static function add_svg_filter_data( $filter_id, $filter_data ) {
-		$slug = $filter_data['slug'];
-
-		self::$used_svg_filter_data[ $slug ] = $filter_data;
-		self::$used_svg_filter_data[ $slug ]['filter_id'] = $filter_id;
+		self::$used_svg_filter_data[ $filter_id ] = $filter_data;
 	}
 
 
@@ -472,7 +464,9 @@ class WP_Duotone_Gutenberg {
 
 		foreach ( $presets_by_origin as $presets ) {
 			foreach ( $presets as $preset ) {
-				self::$global_styles_presets[ _wp_to_kebab_case( $preset['slug'] ) ] = array(
+				$filter_id = self::get_filter_id( _wp_to_kebab_case( $preset['slug'] ) );
+
+				self::$global_styles_presets[ $filter_id ] = array(
 					'slug'   => $preset['slug'],
 					'colors' => $preset['colors'],
 				);
@@ -533,9 +527,10 @@ class WP_Duotone_Gutenberg {
 	 * @return bool True if the duotone preset present and valid.
 	 */
 	private static function is_preset( $duotone_attr ) {
-		$slug = self::get_slug_from_attribute( $duotone_attr );
+		$slug      = self::get_slug_from_attribute( $duotone_attr );
+		$filter_id = self::get_filter_id( $slug );
 
-		return array_key_exists( $slug, self::$global_styles_presets );
+		return array_key_exists( $filter_id, self::$global_styles_presets );
 	}
 
 	/**
@@ -664,10 +659,9 @@ class WP_Duotone_Gutenberg {
 	 */
 	private static function get_svg_definitions( $sources ) {
 		$svgs = '';
-		foreach ( $sources as $filter_data ) {
-			$filter_id = $filter_data['filter_id'];
-			$colors    = $filter_data['colors'];
-			$svgs     .= self::get_filter_svg( $filter_id, $colors );
+		foreach ( $sources as $filter_id => $filter_data ) {
+			$colors = $filter_data['colors'];
+			$svgs  .= self::get_filter_svg( $filter_id, $colors );
 		}
 		return $svgs;
 	}
@@ -683,9 +677,8 @@ class WP_Duotone_Gutenberg {
 	 */
 	private static function get_global_styles_presets( $sources ) {
 		$css = 'body{';
-		foreach ( $sources as $filter_data ) {
+		foreach ( $sources as $filter_id => $filter_data ) {
 			$slug              = $filter_data['slug'];
-			$filter_id         = $filter_data['filter_id'];
 			$colors            = $filter_data['colors'];
 			$css_property_name = self::get_css_custom_property_name( $slug );
 			$declaration_value = is_string( $colors ) ? $colors : self::get_filter_url( $filter_id );
@@ -864,8 +857,8 @@ class WP_Duotone_Gutenberg {
 				$filter_value = self::get_css_var( $slug ); // e.g. 'var(--wp--preset--duotone--green-blue)'.
 
 				self::add_block_declaration( $filter_id, $duotone_selector, $filter_value );
-				self::add_global_styles_preset( $filter_id, $slug );
-				self::add_svg_filter_data( $filter_id, self::$global_styles_presets[ $slug ] );
+				self::add_global_styles_preset( $filter_id );
+				self::add_svg_filter_data( $filter_id, self::$global_styles_presets[ $filter_id ] );
 			} elseif ( $is_css ) {
 				$slug         = wp_unique_id( sanitize_key( $duotone_attr . '-' ) ); // e.g. 'unset-1'.
 				$filter_id    = self::get_filter_id( $slug ); // e.g. 'wp-duotone-filter-unset-1'.
@@ -892,8 +885,8 @@ class WP_Duotone_Gutenberg {
 			$filter_value = self::get_css_var( $slug ); // e.g. 'var(--wp--preset--duotone--green-blue)'.
 
 			self::add_block_declaration( $filter_id, $duotone_selector, $filter_value );
-			self::add_global_styles_preset( $filter_id, $slug );
-			self::add_svg_filter_data( $filter_id, self::$global_styles_presets[ $slug ] );
+			self::add_global_styles_preset( $filter_id );
+			self::add_svg_filter_data( $filter_id, self::$global_styles_presets[ $filter_id ] );
 		}
 
 		// Like the layout hook, this assumes the hook only applies to blocks with a single wrapper.
