@@ -639,7 +639,7 @@ class WP_Duotone_Gutenberg {
 	}
 
 	/**
-	 * Add a CSS declaration to the list of declarations that will be output to the page.
+	 * Enqueue a block CSS declaration for the page.
 	 *
 	 * @param string $filter_id        The filter ID. e.g. 'wp-duotone-000000-ffffff-2'.
 	 * @param string $duotone_selector The block's duotone selector. e.g. '.wp-block-image img'.
@@ -668,7 +668,7 @@ class WP_Duotone_Gutenberg {
 	}
 
 	/**
-	 * Add duotone filter data for generating and appending SVGs to the page.
+	 * Enqueue custom filter assets for the page. Includes an SVG filter and block CSS declaration.
 	 *
 	 * @param string $filter_id        The filter ID. e.g. 'wp-duotone-000000-ffffff-2'.
 	 * @param string $duotone_selector The block's duotone selector. e.g. '.wp-block-image img'.
@@ -681,8 +681,7 @@ class WP_Duotone_Gutenberg {
 	}
 
 	/**
-	 * Add a duotone preset to the list of CSS custom properties that will be output to the page and
-	 * ensure the svg filter is included as well.
+	 * Enqueue preset assets for the page. Includes a CSS custom property, SVG filter, and block CSS declaration.
 	 *
 	 * @param string $filter_id        The filter ID. e.g. 'wp-duotone-blue-orange'.
 	 * @param string $duotone_selector The block's duotone selector. e.g. '.wp-block-image img'.
@@ -814,12 +813,14 @@ class WP_Duotone_Gutenberg {
 				$filter_id    = self::get_filter_id( $slug ); // e.g. 'wp-duotone-filter-blue-orange'.
 				$filter_value = self::get_css_var( $slug ); // e.g. 'var(--wp--preset--duotone--blue-orange)'.
 
+				// CSS custom property, SVG filter, and block CSS.
 				self::enqueue_global_styles_preset( $filter_id, $duotone_selector, $filter_value );
 			} elseif ( $is_css ) {
 				$slug         = wp_unique_id( sanitize_key( $duotone_attr . '-' ) ); // e.g. 'unset-1'.
 				$filter_id    = self::get_filter_id( $slug ); // e.g. 'wp-duotone-filter-unset-1'.
 				$filter_value = $duotone_attr; // e.g. 'unset'.
 
+				// Just block CSS.
 				self::enqueue_block_css( $filter_id, $duotone_selector, $filter_value );
 			} elseif ( $is_custom ) {
 				$slug         = wp_unique_id( sanitize_key( implode( '-', $duotone_attr ) . '-' ) ); // e.g. '000000-ffffff-2'.
@@ -830,6 +831,7 @@ class WP_Duotone_Gutenberg {
 					'colors' => $duotone_attr,
 				);
 
+				// SVG filter and block CSS.
 				self::enqueue_custom_filter( $filter_id, $duotone_selector, $filter_value, $filter_data );
 			}
 		} elseif ( $has_global_styles_duotone ) {
@@ -837,6 +839,7 @@ class WP_Duotone_Gutenberg {
 			$filter_id    = self::get_filter_id( $slug ); // e.g. 'wp-duotone-filter-blue-orange'.
 			$filter_value = self::get_css_var( $slug ); // e.g. 'var(--wp--preset--duotone--blue-orange)'.
 
+			// CSS custom property, SVG filter, and block CSS.
 			self::enqueue_global_styles_preset( $filter_id, $duotone_selector, $filter_value );
 		}
 
