@@ -72,7 +72,7 @@ class WP_Duotone_Gutenberg {
 	 * @param string $duotone_selector The block's duotone selector. e.g. '.wp-block-image img'.
 	 * @param string $filter_value     The filter CSS value. e.g. 'url(#wp-duotone-000000-ffffff-2)' or 'unset'.
 	 */
-	private static function add_block_declaration( $filter_id, $duotone_selector, $filter_value ) {
+	private static function enqueue_block_css( $filter_id, $duotone_selector, $filter_value ) {
 		// Build the CSS selectors to which the filter will be applied.
 		$selectors = explode( ',', $duotone_selector );
 
@@ -112,12 +112,16 @@ class WP_Duotone_Gutenberg {
 	private static $used_global_styles_presets = array();
 
 	/**
-	 * Add a duotone preset to the list of CSS custom properties that will be output to the page.
+	 * Add a duotone preset to the list of CSS custom properties that will be output to the page and
+	 * ensure the svg filter is included as well.
 	 *
-	 * @param string $filter_id The filter ID. e.g. 'wp-duotone-000000-ffffff-2'.
+	 * @param string $filter_id        The filter ID. e.g. 'wp-duotone-000000-ffffff-2'.
+	 * @param string $duotone_selector The block's duotone selector. e.g. '.wp-block-image img'.
+	 * @param string $filter_value     The filter CSS value. e.g. 'url(#wp-duotone-000000-ffffff-2)' or 'unset'.
 	 */
-	private static function add_global_styles_preset( $filter_id ) {
+	private static function enqueue_global_styles_preset( $filter_id, $duotone_selector, $filter_value ) {
 		self::$used_global_styles_presets[ $filter_id ] = self::$global_styles_presets[ $filter_id ];
+		self::enqueue_custom_filter( $filter_id, $duotone_selector, $filter_value, self::$global_styles_presets[ $filter_id ] );
 	}
 
 	/**
@@ -144,11 +148,14 @@ class WP_Duotone_Gutenberg {
 	/**
 	 * Add duotone filter data for generating and appending SVGs to the page.
 	 *
-	 * @param string $filter_id   The filter ID. e.g. 'wp-duotone-000000-ffffff-2'.
-	 * @param array  $filter_data Duotone filter data with 'slug' and 'colors' keys.
+	 * @param string $filter_id        The filter ID. e.g. 'wp-duotone-000000-ffffff-2'.
+	 * @param string $duotone_selector The block's duotone selector. e.g. '.wp-block-image img'.
+	 * @param string $filter_value     The filter CSS value. e.g. 'url(#wp-duotone-000000-ffffff-2)' or 'unset'.
+	 * @param array  $filter_data      Duotone filter data with 'slug' and 'colors' keys.
 	 */
-	private static function add_svg_filter_data( $filter_id, $filter_data ) {
+	private static function enqueue_custom_filter( $filter_id, $duotone_selector, $filter_value, $filter_data ) {
 		self::$used_svg_filter_data[ $filter_id ] = $filter_data;
+		self::enqueue_block_css( $filter_id, $duotone_selector, $filter_value );
 	}
 
 
@@ -853,37 +860,30 @@ class WP_Duotone_Gutenberg {
 				$filter_id    = self::get_filter_id( $slug ); // e.g. 'wp-duotone-filter-green-blue'.
 				$filter_value = self::get_css_var( $slug ); // e.g. 'var(--wp--preset--duotone--green-blue)'.
 
-				self::add_block_declaration( $filter_id, $duotone_selector, $filter_value );
-				self::add_global_styles_preset( $filter_id );
-				self::add_svg_filter_data( $filter_id, self::$global_styles_presets[ $filter_id ] );
+				self::enqueue_global_styles_preset( $filter_id, $duotone_selector, $filter_value );
 			} elseif ( $is_css ) {
 				$slug         = wp_unique_id( sanitize_key( $duotone_attr . '-' ) ); // e.g. 'unset-1'.
 				$filter_id    = self::get_filter_id( $slug ); // e.g. 'wp-duotone-filter-unset-1'.
 				$filter_value = $duotone_attr; // e.g. 'unset'.
 
-				self::add_block_declaration( $filter_id, $duotone_selector, $filter_value );
+				self::enqueue_block_css( $filter_id, $duotone_selector, $filter_value );
 			} elseif ( $is_custom ) {
 				$slug         = wp_unique_id( sanitize_key( implode( '-', $duotone_attr ) . '-' ) ); // e.g. '000000-ffffff-2'.
 				$filter_id    = self::get_filter_id( $slug ); // e.g. 'wp-duotone-filter-000000-ffffff-2'.
 				$filter_value = self::get_filter_url( $filter_id ); // e.g. 'url(#wp-duotone-filter-000000-ffffff-2)'.
-
-				self::add_block_declaration( $filter_id, $duotone_selector, $filter_value );
-				self::add_svg_filter_data(
-					$filter_id,
-					array(
-						'slug'   => $slug,
-						'colors' => $duotone_attr,
-					)
+				$filter_data  = array(
+					'slug'   => $slug,
+					'colors' => $duotone_attr,
 				);
+
+				self::enqueue_custom_filter( $filter_id, $duotone_selector, $filter_value, $filter_data );
 			}
 		} elseif ( $has_global_styles_duotone ) {
 			$slug         = self::$global_styles_block_names[ $block['blockName'] ]; // e.g. 'green-blue'.
 			$filter_id    = self::get_filter_id( $slug ); // e.g. 'wp-duotone-filter-green-blue'.
 			$filter_value = self::get_css_var( $slug ); // e.g. 'var(--wp--preset--duotone--green-blue)'.
 
-			self::add_block_declaration( $filter_id, $duotone_selector, $filter_value );
-			self::add_global_styles_preset( $filter_id );
-			self::add_svg_filter_data( $filter_id, self::$global_styles_presets[ $filter_id ] );
+			self::enqueue_global_styles_preset( $filter_id, $duotone_selector, $filter_value );
 		}
 
 		// Like the layout hook, this assumes the hook only applies to blocks with a single wrapper.
