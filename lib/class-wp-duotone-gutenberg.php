@@ -668,19 +668,6 @@ class WP_Duotone_Gutenberg {
 	}
 
 	/**
-	 * Add a duotone preset to the list of CSS custom properties that will be output to the page and
-	 * ensure the svg filter is included as well.
-	 *
-	 * @param string $filter_id        The filter ID. e.g. 'wp-duotone-000000-ffffff-2'.
-	 * @param string $duotone_selector The block's duotone selector. e.g. '.wp-block-image img'.
-	 * @param string $filter_value     The filter CSS value. e.g. 'url(#wp-duotone-000000-ffffff-2)' or 'unset'.
-	 */
-	private static function enqueue_global_styles_preset( $filter_id, $duotone_selector, $filter_value ) {
-		self::$used_global_styles_presets[ $filter_id ] = self::$global_styles_presets[ $filter_id ];
-		self::enqueue_custom_filter( $filter_id, $duotone_selector, $filter_value, self::$global_styles_presets[ $filter_id ] );
-	}
-
-	/**
 	 * Add duotone filter data for generating and appending SVGs to the page.
 	 *
 	 * @param string $filter_id        The filter ID. e.g. 'wp-duotone-000000-ffffff-2'.
@@ -691,6 +678,19 @@ class WP_Duotone_Gutenberg {
 	private static function enqueue_custom_filter( $filter_id, $duotone_selector, $filter_value, $filter_data ) {
 		self::$used_svg_filter_data[ $filter_id ] = $filter_data;
 		self::enqueue_block_css( $filter_id, $duotone_selector, $filter_value );
+	}
+
+	/**
+	 * Add a duotone preset to the list of CSS custom properties that will be output to the page and
+	 * ensure the svg filter is included as well.
+	 *
+	 * @param string $filter_id        The filter ID. e.g. 'wp-duotone-000000-ffffff-2'.
+	 * @param string $duotone_selector The block's duotone selector. e.g. '.wp-block-image img'.
+	 * @param string $filter_value     The filter CSS value. e.g. 'url(#wp-duotone-000000-ffffff-2)' or 'unset'.
+	 */
+	private static function enqueue_global_styles_preset( $filter_id, $duotone_selector, $filter_value ) {
+		self::$used_global_styles_presets[ $filter_id ] = self::$global_styles_presets[ $filter_id ];
+		self::enqueue_custom_filter( $filter_id, $duotone_selector, $filter_value, self::$global_styles_presets[ $filter_id ] );
 	}
 
 	/**
