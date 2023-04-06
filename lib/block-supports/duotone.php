@@ -392,6 +392,7 @@ add_action( 'wp_loaded', array( 'WP_Duotone_Gutenberg', 'set_global_style_block_
 // Remove WordPress core filter to avoid rendering duplicate support elements.
 remove_filter( 'render_block', 'wp_render_duotone_support', 10, 2 );
 add_filter( 'render_block', array( 'WP_Duotone_Gutenberg', 'render_duotone_support' ), 10, 2 );
+add_action( 'wp_enqueue_scripts', array( 'WP_Duotone_Gutenberg', 'output_block_styles' ), 9 );
 add_action( 'wp_enqueue_scripts', array( 'WP_Duotone_Gutenberg', 'output_global_styles' ), 11 );
 add_action( 'wp_footer', array( 'WP_Duotone_Gutenberg', 'output_footer_assets' ), 10 );
 add_filter( 'block_editor_settings_all', array( 'WP_Duotone_Gutenberg', 'add_editor_settings' ), 10 );
