@@ -317,39 +317,39 @@ function gutenberg_tinycolor_string_to_rgb( $color_str ) {
 /**
  * Returns the prefixed id for the duotone filter for use as a CSS id.
  *
- * @deprecated 6.3.0 Use WP_Duotone_Gutenberg::get_filter_id() instead.
+ * @deprecated 6.3.0
  *
  * @param  array $preset Duotone preset value as seen in theme.json.
  * @return string        Duotone filter CSS id.
  */
 function gutenberg_get_duotone_filter_id( $preset ) {
-	_deprecated_function( __FUNCTION__, '6.3.0', 'WP_Duotone_Gutenberg::get_filter_id' );
+	_deprecated_function( __FUNCTION__, '6.3.0' );
 	return WP_Duotone_Gutenberg::get_filter_id_from_preset( $preset );
 }
 
 /**
  * Returns the CSS filter property url to reference the rendered SVG.
  *
- * @deprecated 6.3.0 Use WP_Duotone_Gutenberg::get_filter_css_property_value_from_preset() instead.
+ * @deprecated 6.3.0
  *
  * @param  array $preset Duotone preset value as seen in theme.json.
  * @return string        Duotone CSS filter property url value.
  */
 function gutenberg_get_duotone_filter_property( $preset ) {
-	_deprecated_function( __FUNCTION__, '6.3.0', 'WP_Duotone_Gutenberg::get_filter_css_property_value_from_preset' );
+	_deprecated_function( __FUNCTION__, '6.3.0');
 	return WP_Duotone_Gutenberg::get_filter_css_property_value_from_preset( $preset );
 }
 
 /**
  * Returns the duotone filter SVG string for the preset.
  *
- * @deprecated  6.3.0 Use WP_Duotone_Gutenberg::get_filter_svg_from_preset() instead.
+ * @deprecated  6.3.0
  *
  * @param  array $preset Duotone preset value as seen in theme.json.
  * @return string        Duotone SVG filter.
  */
 function gutenberg_get_duotone_filter_svg( $preset ) {
-	_deprecated_function( __FUNCTION__, '6.3.0', 'WP_Duotone_Gutenberg::get_filter_svg_from_preset' );
+	_deprecated_function( __FUNCTION__, '6.3.0' );
 	return WP_Duotone_Gutenberg::get_filter_svg_from_preset( $preset );
 }
 
