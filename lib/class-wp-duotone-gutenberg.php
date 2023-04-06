@@ -39,10 +39,10 @@
  */
 class WP_Duotone_Gutenberg {
 	/**
-	 * An array of Duotone presets from global, theme, and custom styles.
+	 * An array of duotone filter data from global, theme, and custom presets.
 	 *
 	 * Example:
-	 * [
+	 *  [
 	 *      'wp-duotone-blue-orange' =>
 	 *          [
 	 *              'slug'  => 'blue-orange',
@@ -50,7 +50,7 @@ class WP_Duotone_Gutenberg {
 	 *          ]
 	 *      ],
 	 *      …
-	 * ]
+	 *  ]
 	 *
 	 * @since 6.3.0
 	 * @var array
@@ -58,8 +58,8 @@ class WP_Duotone_Gutenberg {
 	private static $global_styles_presets = array();
 
 	/**
-	 * An array of block names from global, theme, and custom styles that have duotone presets. We'll use this to quickly
-	 * check if a block being rendered needs to have duotone applied, and which duotone preset to use.
+	 * Block names from global, theme, and custom styles that use duotone presets and the slug of
+	 * the preset they are using.
 	 *
 	 * Example:
 	 *  [
@@ -73,7 +73,7 @@ class WP_Duotone_Gutenberg {
 	private static $global_styles_block_names = array();
 
 	/**
-	 * All of the CSS declarations that need to be output to the page.
+	 * All of the block CSS declarations for styles on the page.
 	 *
 	 * Example:
 	 *  [
@@ -84,7 +84,7 @@ class WP_Duotone_Gutenberg {
 	 *          ],
 	 *      ],
 	 *      …
-	 * ]
+	 *  ]
 	 *
 	 * @since 6.3.0
 	 * @var array
@@ -92,7 +92,8 @@ class WP_Duotone_Gutenberg {
 	private static $block_css_declarations = array();
 
 	/**
-	 * All of the duotone presets that need CSS custom properties on the page.
+	 * All of the duotone filter data from presets for CSS custom properties on
+	 * the page.
 	 *
 	 * Example:
 	 *  [
@@ -109,7 +110,8 @@ class WP_Duotone_Gutenberg {
 	private static $used_global_styles_presets = array();
 
 	/**
-	 * All of the duotone filter data for generating and appending SVGs to the page.
+	 * All of the duotone filter data for SVGs on the page. Includes both
+	 * presets and custom filters.
 	 *
 	 * Example:
 	 *  [
