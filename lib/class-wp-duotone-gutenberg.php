@@ -466,10 +466,7 @@ class WP_Duotone_Gutenberg {
 			foreach ( $presets as $preset ) {
 				$filter_id = self::get_filter_id( _wp_to_kebab_case( $preset['slug'] ) );
 
-				self::$global_styles_presets[ $filter_id ] = array(
-					'slug'   => $preset['slug'],
-					'colors' => $preset['colors'],
-				);
+				self::$global_styles_presets[ $filter_id ] = $preset;
 			}
 		}
 	}
