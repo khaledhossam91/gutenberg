@@ -462,7 +462,7 @@ class WP_Duotone_Gutenberg {
 	 * @param string $slug The slug of the duotone preset.
 	 * @return string The ID of the duotone filter.
 	 */
-	private static function get_filter_id( $slug ) {
+	public static function get_filter_id( $slug ) {
 		return self::FILTER_ID_PREFIX . $slug;
 	}
 
@@ -558,7 +558,7 @@ class WP_Duotone_Gutenberg {
 	 * @return string The CSS declaration.
 	 */
 	private static function get_css_custom_property_declaration( $filter_data ) {
-		$declaration_value                = gutenberg_get_duotone_filter_property( $filter_data );
+		$declaration_value                = self::get_filter_css_property_value_from_preset( $filter_data );
 		$duotone_preset_css_property_name = self::get_css_custom_property_name( $filter_data['slug'] );
 		return $duotone_preset_css_property_name . ': ' . $declaration_value . ';';
 	}
@@ -739,7 +739,7 @@ class WP_Duotone_Gutenberg {
 					'colors' => $duotone_attr,
 				);
 				// Build a customized CSS filter property for unique slug.
-				$declaration_value = gutenberg_get_duotone_filter_property( $filter_data );
+				$declaration_value = self::get_filter_css_property_value_from_preset( $filter_data );
 
 				self::$output[ $slug ] = $filter_data;
 			}
@@ -831,7 +831,29 @@ class WP_Duotone_Gutenberg {
 	 * @return string The SVG for the filter definition.
 	 */
 	public static function get_filter_svg_from_preset( $preset ) {
-		$filter_id = self::get_filter_id( $preset['slug'] );
+		$filter_id = '';
+		if ( isset( $preset['slug'] ) ) {
+			$filter_id = self::get_filter_id( $preset['slug'] );
+		}
 		return self::get_filter_svg( $filter_id, $preset['colors'] );
+	}
+
+	/**
+	 * Gets the CSS filter property value from a preset.
+	 *
+	 * @param array $preset The duotone preset.
+	 * @return string The CSS filter property value.
+	 */
+	public static function get_filter_css_property_value_from_preset( $preset ) {
+		if ( isset( $preset['colors'] ) && is_string( $preset['colors'] ) ) {
+			return $preset['colors'];
+		}
+
+		$filter_id = '';
+		if ( isset( $preset['slug'] ) ) {
+			$filter_id = self::get_filter_id( $preset['slug'] );
+		}
+
+		return 'url(#' . $filter_id . ')';
 	}
 }
