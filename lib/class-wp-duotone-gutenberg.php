@@ -462,7 +462,7 @@ class WP_Duotone_Gutenberg {
 	 * @param string $slug The slug of the duotone preset.
 	 * @return string The ID of the duotone filter.
 	 */
-	public static function get_filter_id( $slug ) {
+	private static function get_filter_id( $slug ) {
 		return self::FILTER_ID_PREFIX . $slug;
 	}
 
@@ -851,16 +851,27 @@ class WP_Duotone_Gutenberg {
 	}
 
 	/**
+	 * Returns the prefixed id for the duotone filter for use as a CSS id.
+	 *
+	 * @param  array $preset Duotone preset value as seen in theme.json.
+	 * @return string        Duotone filter CSS id.
+	 */
+	public static function get_filter_id_from_preset( $preset ) {
+		$filter_id = '';
+		if ( isset( $preset['slug'] ) ) {
+			$filter_id = self::get_filter_id( $preset['slug'] );
+		}
+		return $filter_id;
+	}
+
+	/**
 	 * Gets the SVG for the duotone filter definition from a preset.
 	 *
 	 * @param array $preset The duotone preset.
 	 * @return string The SVG for the filter definition.
 	 */
 	public static function get_filter_svg_from_preset( $preset ) {
-		$filter_id = '';
-		if ( isset( $preset['slug'] ) ) {
-			$filter_id = self::get_filter_id( $preset['slug'] );
-		}
+		$filter_id = self::get_filter_id_from_preset( $preset );
 		return self::get_filter_svg( $filter_id, $preset['colors'] );
 	}
 
@@ -875,10 +886,7 @@ class WP_Duotone_Gutenberg {
 			return $preset['colors'];
 		}
 
-		$filter_id = '';
-		if ( isset( $preset['slug'] ) ) {
-			$filter_id = self::get_filter_id( $preset['slug'] );
-		}
+		$filter_id = self::get_filter_id_from_preset( $preset );
 
 		return 'url(#' . $filter_id . ')';
 	}
