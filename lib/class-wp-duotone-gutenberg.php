@@ -39,25 +39,6 @@
  */
 class WP_Duotone_Gutenberg {
 	/**
-	 * An array of duotone filter data from global, theme, and custom presets.
-	 *
-	 * Example:
-	 *  [
-	 *      'wp-duotone-blue-orange' =>
-	 *          [
-	 *              'slug'  => 'blue-orange',
-	 *              'colors' => [ '#0000ff', '#ffcc00' ],
-	 *          ]
-	 *      ],
-	 *      …
-	 *  ]
-	 *
-	 * @since 6.3.0
-	 * @var array
-	 */
-	private static $global_styles_presets = array();
-
-	/**
 	 * Block names from global, theme, and custom styles that use duotone presets and the slug of
 	 * the preset they are using.
 	 *
@@ -71,6 +52,67 @@ class WP_Duotone_Gutenberg {
 	 * @var array
 	 */
 	private static $global_styles_block_names = array();
+
+	/**
+	 * An array of duotone filter data from global, theme, and custom presets.
+	 *
+	 * Example:
+	 *  [
+	 *      'wp-duotone-blue-orange' => [
+	 *          'slug'   => 'blue-orange',
+	 *          'colors' => [ '#0000ff', '#ffcc00' ],
+	 *      ],
+	 *      'wp-duotone-red-yellow' => [
+	 *          'slug'   => 'red-yellow',
+	 *          'colors' => [ '#cc0000', '#ffff33' ],
+	 *      ],
+	 *      …
+	 *  ]
+	 *
+	 * @since 6.3.0
+	 * @var array
+	 */
+	private static $global_styles_presets = array();
+
+	/**
+	 * All of the duotone filter data from presets for CSS custom properties on
+	 * the page.
+	 *
+	 * Example:
+	 *  [
+	 *      'wp-duotone-blue-orange' => [
+	 *          'slug'   => 'blue-orange',
+	 *          'colors' => [ '#0000ff', '#ffcc00' ],
+	 *      ],
+	 *      …
+	 *  ]
+	 *
+	 * @since 6.3.0
+	 * @var array
+	 */
+	private static $used_global_styles_presets = array();
+
+	/**
+	 * All of the duotone filter data for SVGs on the page. Includes both
+	 * presets and custom filters.
+	 *
+	 * Example:
+	 *  [
+	 *      'wp-duotone-blue-orange' => [
+	 *          'slug'   => 'blue-orange',
+	 *          'colors' => [ '#0000ff', '#ffcc00' ],
+	 *      ],
+	 *      'wp-duotone-000000-ffffff-2' => [
+	 *          'slug'   => '000000-ffffff-2',
+	 *          'colors' => [ '#000000', '#ffffff' ],
+	 *      ],
+	 *      …
+	 *  ]
+	 *
+	 * @since 6.3.0
+	 * @var array
+	 */
+	private static $used_svg_filter_data = array();
 
 	/**
 	 * All of the block CSS declarations for styles on the page.
@@ -90,46 +132,6 @@ class WP_Duotone_Gutenberg {
 	 * @var array
 	 */
 	private static $block_css_declarations = array();
-
-	/**
-	 * All of the duotone filter data from presets for CSS custom properties on
-	 * the page.
-	 *
-	 * Example:
-	 *  [
-	 *      'wp-duotone-blue-orange' => [
-	 *          'slug'  => 'blue-orange',
-	 *          'colors' => [ '#0000ff', '#ffcc00' ],
-	 *      ],
-	 *      …
-	 *  ]
-	 *
-	 * @since 6.3.0
-	 * @var array
-	 */
-	private static $used_global_styles_presets = array();
-
-	/**
-	 * All of the duotone filter data for SVGs on the page. Includes both
-	 * presets and custom filters.
-	 *
-	 * Example:
-	 *  [
-	 *      'wp-duotone-blue-orange' => [
-	 *          'slug'      => 'blue-orange',
-	 *          'colors'    => [ '#0000ff', '#ffcc00' ],
-	 *      ],
-	 *      'wp-duotone-000000-ffffff-2' => [
-	 *          'slug'      => '000000-ffffff-2',
-	 *          'colors'    => [ '#000000', '#ffffff' ],
-	 *      ],
-	 *      …
-	 *  ]
-	 *
-	 * @since 6.3.0
-	 * @var array
-	 */
-	private static $used_svg_filter_data = array();
 
 	/**
 	 * Direct port of colord's clamp function. Using min/max instead of
