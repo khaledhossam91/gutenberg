@@ -260,7 +260,7 @@ none are provided.
 
 _Parameters_
 
--   _value_ `RichTextValue & RichTextNonNullable`: Value to modify.
+-   _value_ `RichTextValue`: Value to modify.
 -   _valueToInsert_ `RichTextValue|string`: Value to insert.
 -   _startIndex_ `[number]`: Start index.
 -   _endIndex_ `[number]`: End index.
